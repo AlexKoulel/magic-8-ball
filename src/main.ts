@@ -10,19 +10,44 @@ const camera = new THREE.PerspectiveCamera(75,window.innerWidth / window.innerHe
 const renderer = new THREE.WebGLRenderer({
   canvas  : document.querySelector('#bg'),
 });  
-const startbtn = document.getElementById('StartButton');
-const answer = document.getElementById('answer');
+
 const answersarr = JSON.parse('["Without a doubt.","Absolutely.","Yes, of course.","100%.","Yes.","Try again.","Ask again later.","Who knows?.","I am not 100% sure.","I do not really know.","It is not certain.","Certainly no.","Probably not.","No.","There is a 0% chance." ]');
+
+//HTML elements
+const askbtn = document.getElementById('AskButton');
+const question = document.getElementById('question-input')
+const answer = document.getElementById('answer');
+
+//Model Variables
+const gltfLoader = new GLTFLoader();
+let mixer: THREE.AnimationMixer;
+let clips;
+let action: THREE.AnimationAction;
+var eightball;
 
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth,window.innerHeight);
 
 camera.position.setZ(2);
-camera.position.setX(2);
+camera.position.setX(1);
 camera.position.setY(-1);
 
 renderer.render(scene,camera);
 
+askbtn!.disabled = true;
+question!.value = "";
+
+question?.addEventListener('keyup',function()
+{
+  if(this.value.length > 0)
+  {
+    askbtn!.disabled = false;
+  }
+  else
+  {
+    askbtn!.disabled = true;
+  }
+})
 window.addEventListener('resize', function()
 {
   var width = window.innerWidth;
@@ -32,11 +57,6 @@ window.addEventListener('resize', function()
   camera.updateProjectionMatrix();
 });
 
-const gltfLoader = new GLTFLoader();
-let mixer: THREE.AnimationMixer;
-var eightball;
-let clips;
-let action: THREE.AnimationAction;
 gltfLoader.load(
   './src/Models/8ball.gltf',
   function(gltf){
@@ -56,8 +76,8 @@ gltfLoader.load(
   },
 )
 
-const pointLight = new THREE.PointLight(0xffffff);
-pointLight.position.set(30,20,20);
+const pointLight = new THREE.PointLight(0xa20064);
+pointLight.position.set(20,10,20);
 
 const ambientLight = new THREE.AmbientLight(0xffffff);
 scene.add(pointLight,ambientLight);
@@ -65,7 +85,7 @@ scene.add(pointLight,ambientLight);
 const controls = new OrbitControls(camera,renderer.domElement);
 
 const loader = new THREE.TextureLoader();
-scene.background = loader.load('./src/Images/space.jpg');
+scene.background = loader.load('./src/Images/background.jpg');
 
 const clock = new THREE.Clock();
 
@@ -82,6 +102,7 @@ function playAnimation()
   requestAnimationFrame(playAnimation);
   mixer.addEventListener('finished',function()
   {
+    question!.readOnly = false;
     answer!.style.opacity = '1';
     action.reset();
     action.enabled = false;
@@ -89,12 +110,18 @@ function playAnimation()
   mixer.update(clock.getDelta());
 }
 
-startbtn?.addEventListener('click',function handleClick(){
-  action.enabled = true;
-  let randomanswer = Math.floor(Math.random() * 14);
-  console.log(answersarr[randomanswer]);
-  answer!.innerHTML = answersarr[randomanswer];
-  playAnimation();
+askbtn?.addEventListener('click',function handleClick(){
+  if(question!.value != 0)
+  {
+    question!.readOnly = true;
+    answer!.style.opacity = '0';
+    askbtn.disabled = true;
+    question!.value = "";
+    action.enabled = true;
+    let randomanswer = Math.floor(Math.random() * 14);
+    answer!.innerHTML = answersarr[randomanswer];
+    playAnimation();
+  }
 })
 
 renderBall();
