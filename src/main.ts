@@ -11,6 +11,7 @@ const renderer = new THREE.WebGLRenderer({
   canvas  : document.querySelector('#bg'),
 });  
 
+//JSON containing all the answers
 const answersarr = JSON.parse('["Without a doubt.","Absolutely.","Yes, of course.","100%.","Yes.","Try again.","Ask again later.","Who knows?.","I am not 100% sure.","I do not really know.","It is not certain.","Certainly no.","Probably not.","No.","There is a 0% chance." ]');
 
 //HTML elements
@@ -37,25 +38,6 @@ renderer.render(scene,camera);
 askbtn!.disabled = true;
 question!.value = "";
 
-question?.addEventListener('keyup',function()
-{
-  if(this.value.length > 0)
-  {
-    askbtn!.disabled = false;
-  }
-  else
-  {
-    askbtn!.disabled = true;
-  }
-})
-window.addEventListener('resize', function()
-{
-  var width = window.innerWidth;
-  var height = window.innerHeight;
-  renderer.setSize(width,height);
-  camera.aspect = width / height;
-  camera.updateProjectionMatrix();
-});
 
 gltfLoader.load(
   './src/Models/8ball.gltf',
@@ -110,6 +92,7 @@ function playAnimation()
   mixer.update(clock.getDelta());
 }
 
+
 askbtn?.addEventListener('click',function handleClick(){
   if(question!.value != 0)
   {
@@ -124,4 +107,26 @@ askbtn?.addEventListener('click',function handleClick(){
   }
 })
 
+//Disables button if input is empty.
+question?.addEventListener('keyup',function()
+{
+  if(this.value.length > 0)
+  {
+    askbtn!.disabled = false;
+  }
+  else
+  {
+    askbtn!.disabled = true;
+  }
+})
+
+//Properly updates the aspect ratio and size of the contents of the window. 
+window.addEventListener('resize', function()
+{
+  var width = window.innerWidth;
+  var height = window.innerHeight;
+  renderer.setSize(width,height);
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
+});
 renderBall();
