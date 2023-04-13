@@ -15,8 +15,8 @@ const renderer = new THREE.WebGLRenderer({
 const answersarr = JSON.parse('["Without a doubt.","Absolutely.","Yes, of course.","100%.","Yes.","Try again.","Ask again later.","Who knows?.","I am not 100% sure.","I do not really know.","It is not certain.","Certainly no.","Probably not.","No.","There is a 0% chance." ]');
 
 //HTML elements
-const askbtn = document.getElementById('AskButton');
-const question = document.getElementById('question-input')
+const askbtn = document.getElementById('AskButton') as HTMLButtonElement;
+const question = document.getElementById('question-input') as HTMLInputElement;
 const answer = document.getElementById('answer');
 
 //Model Variables
@@ -41,7 +41,7 @@ question!.value = "";
 
 gltfLoader.load(
   './src/Models/8ball.gltf',
-  function(gltf){
+  function(gltf: { scene: any; animations: any; }){
     eightball = gltf.scene;
     scene.add(eightball);
     clips = gltf.animations;
@@ -50,10 +50,10 @@ gltfLoader.load(
     action = mixer.clipAction(clip);
     action.setLoop(THREE.LoopOnce, 1);
   },
-  function(xhr){
+  function(xhr: { loader: number; total: number; }){
     console.log((xhr.loader/xhr.total*100) + '% loaded');
   },
-  function(error){
+  function(error: any){
     console.log('Error loading model');
   },
 )
@@ -94,7 +94,7 @@ function playAnimation()
 
 
 askbtn?.addEventListener('click',function handleClick(){
-  if(question!.value != 0)
+  if(question!.value != "0")
   {
     question!.readOnly = true;
     answer!.style.opacity = '0';
